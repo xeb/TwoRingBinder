@@ -9,7 +9,8 @@ Installation & Usage
 
 3) Create one or more implementations of IBindModelExtension for your Models
 
-4) Your implementation Pre & Post Model Bind events will now be invoked by the ModelBinder.  The default binding will still occur.
+4) Your implementation Pre & Post Bind Model events will now be invoked by the ModelBinder.  
+The default binding will still occur.
 
 
 Notes 
