@@ -38,18 +38,25 @@ namespace TwoRingBinder.Core
 			return boundModel;
 		}
         
-		private readonly Dictionary<Type, object> _instances = new Dictionary<Type, object>();
-		private object GetInstance(Type type, string name)
+		private static readonly Dictionary<Type, object> Instances = new Dictionary<Type, object>();
+		private static object GetInstance(Type type, string name)
 		{
-			if (!_instances.ContainsKey(type))
+			if (!Instances.ContainsKey(type))
 			{
 				var instance = Activator.CreateInstance(type);
 				if (instance == null) throw new Exception(String.Format("Cannot create instance of {0}", name));
 
-				_instances.Add(type, instance);
+				Instances.Add(type, instance);
 			}
 
-			return _instances[type];
+			return Instances[type];
+		}
+        
+		private static List<Type> GetBindingExtensions(ModelBindingContext bindingContext)
+		{
+			return Assembly.GetAssembly(bindingContext.ModelType).GetTypes()
+				.Where(t => IsImplementationOf(t, GetBindingExtension(bindingContext)))
+				.ToList();
 		}
 
 		private static Type GetBindingExtension(ModelBindingContext bindingContext)
@@ -58,11 +65,9 @@ namespace TwoRingBinder.Core
 			return typeof(IBindModelExtension<>).MakeGenericType(bindingContext.ModelType);
 		}
 
-		private static List<Type> GetBindingExtensions(ModelBindingContext bindingContext)
+		private static Boolean IsImplementationOf(Type type, Type interfaceType)
 		{
-			return Assembly.GetAssembly(bindingContext.ModelType).GetTypes()
-				.Where(t => t.IsImplementationOf(GetBindingExtension(bindingContext)))
-				.ToList();
+			return type.GetInterfaces().Any(i => i.FullName == interfaceType.FullName);
 		}
 	}
 }
