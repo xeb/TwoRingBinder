@@ -19,7 +19,7 @@ namespace TwoRingBinder.Core
 		{
 			var allTypes = GetBindingExtensions(bindingContext);
 
-			if (allTypes.Count == 0)
+			if (!allTypes.Any())
 			{
 				return base.BindModel(controllerContext, bindingContext); ;
 			}
@@ -30,6 +30,20 @@ namespace TwoRingBinder.Core
 
 			// Call the base.BindModel Method
 			var boundModel = base.BindModel(controllerContext, bindingContext);
+
+			// Fire Bound Event in Model
+			var onBound = bindingContext.ModelType.GetMethod("OnBound");
+			if(onBound != null)
+			{
+				if (onBound.GetParameters().Any())
+				{
+					onBound.Invoke(boundModel, new object[] {controllerContext, bindingContext});
+				}
+				else
+				{
+					onBound.Invoke(boundModel, null);
+				}
+			}
 
 			// Fire All PostBindModel Events
 			allTypes.ForEach(type => type.InvokeMember("PostBindModel", BindingFlags.InvokeMethod, null, 

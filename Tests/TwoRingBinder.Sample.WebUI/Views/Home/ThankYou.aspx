@@ -26,6 +26,10 @@
 			<th>IsFemale</th>
 			<td><%=Model.IsFemale %></td>
 		</tr>
+		<tr>
+			<th>FromRoot</th>
+			<td><%=Model.FromRoot %></td>
+		</tr>
 	</table>
 
 </asp:Content>

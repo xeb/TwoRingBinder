@@ -16,5 +16,12 @@ namespace TwoRingBinder.Sample.WebUI.Models
 		public string Origin { get; set; } //This is required and will be added PreBindModel
         
 		public bool IsFemale { get; set; } //This is not required and will be added PostBindModel
+
+		public bool FromRoot { get; set; }
+
+		public void OnBound() // Invoked after model is bound
+		{
+			FromRoot = Origin == "/";	
+		}
 	}
 }
