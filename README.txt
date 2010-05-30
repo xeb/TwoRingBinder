@@ -12,6 +12,15 @@ Installation & Usage
 4) Your implementation Pre & Post Bind Model events will now be invoked by the ModelBinder.  
 The default binding will still occur.
 
+...OR...
+
+1) Add the ModelBinder to your Application_Start event, via:
+   ModelBinders.Binders.DefaultBinder = new TwoRingBinder.Core.ModelBinder();
+
+2) Create your Models
+
+3) Create a OnBound Method on your Model that will be invoked when it is Bound
+
 
 Notes 
 ------------------------
