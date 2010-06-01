@@ -24,6 +24,13 @@ namespace TwoRingBinder.Core
 				return base.BindModel(controllerContext, bindingContext); ;
 			}
 
+			// Fire OnBinding Event in Model
+			var onBinding = bindingContext.ModelType.GetMethod("OnBinding");
+			if (onBinding != null)
+			{
+				onBinding.Invoke(GetInstance(bindingContext.ModelType, bindingContext.ModelName), new object[] { controllerContext, bindingContext });
+			}
+
 			// Fire All PreBindModel Events
 			allTypes.ForEach(type => type.InvokeMember("PreBindModel", BindingFlags.InvokeMethod, null,
 				GetInstance(type, bindingContext.ModelName), new object[] { controllerContext, bindingContext }));
@@ -31,13 +38,17 @@ namespace TwoRingBinder.Core
 			// Call the base.BindModel Method
 			var boundModel = base.BindModel(controllerContext, bindingContext);
 
+			// Fire All PostBindModel Events
+			allTypes.ForEach(type => type.InvokeMember("PostBindModel", BindingFlags.InvokeMethod, null, 
+				GetInstance(type, bindingContext.ModelName), new[] { boundModel, controllerContext, bindingContext }));
+            
 			// Fire Bound Event in Model
 			var onBound = bindingContext.ModelType.GetMethod("OnBound");
-			if(onBound != null)
+			if (onBound != null)
 			{
 				if (onBound.GetParameters().Any())
 				{
-					onBound.Invoke(boundModel, new object[] {controllerContext, bindingContext});
+					onBound.Invoke(boundModel, new object[] { controllerContext, bindingContext });
 				}
 				else
 				{
@@ -45,10 +56,6 @@ namespace TwoRingBinder.Core
 				}
 			}
 
-			// Fire All PostBindModel Events
-			allTypes.ForEach(type => type.InvokeMember("PostBindModel", BindingFlags.InvokeMethod, null, 
-				GetInstance(type, bindingContext.ModelName), new[] { boundModel, controllerContext, bindingContext }));
-			
 			return boundModel;
 		}
         
