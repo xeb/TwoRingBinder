@@ -34,10 +34,15 @@ namespace TwoRingBinder.Sample.WebUI.Models
 				new ValueProviderResult(host, host, new System.Globalization.CultureInfo("en-US")));
 		}
 
-		/// <summary>
-		/// Will be Invoked Last after the Extension
-		/// </summary>
-		public void OnBound() // Invoked after model is bound
+		///// <summary>
+		///// Will be Invoked Last after the Extension
+		///// </summary>
+		//public void OnBound() // Invoked after model is bound
+		//{
+		//    FromRoot = Origin == "/";	
+		//}
+
+		public void OnBound(ControllerContext controllerContext, ModelBindingContext bindingContext)
 		{
 			FromRoot = Origin == "/";	
 		}

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
@@ -48,12 +49,18 @@ namespace TwoRingBinder.Core
 			{
 				if (onBound.GetParameters().Any())
 				{
+					Debug.Print("OnBound method found for {0}, invoking with context parameters...", bindingContext.ModelName);
 					onBound.Invoke(boundModel, new object[] { controllerContext, bindingContext });
 				}
 				else
 				{
+					Debug.Print("OnBound method found for {0}, invoking with no parameters...", bindingContext.ModelName);
 					onBound.Invoke(boundModel, null);
 				}
+			}
+			else
+			{
+				Debug.Print("No OnBound method found for {0}, skipping...", bindingContext.ModelName);
 			}
 
 			return boundModel;
